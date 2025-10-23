@@ -39,7 +39,7 @@ flower==2.0.1
 # AI/ML
 anthropic==0.8.1
 openai==1.7.2
-pinecone-client==3.0.0
+pinecone-client==3.2.2
 
 # Vector embeddings
 sentence-transformers==2.3.1
