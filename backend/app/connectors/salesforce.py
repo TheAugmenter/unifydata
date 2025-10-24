@@ -57,8 +57,6 @@ class SalesforceConnector(BaseOAuthConnector):
             "redirect_uri": self.redirect_uri,
             "state": state,
             "scope": " ".join(self.scopes),
-            # Salesforce-specific: request immediate response (no approval page for already authorized apps)
-            "prompt": "login",
         }
 
         # Add PKCE parameters if provided

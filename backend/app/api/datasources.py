@@ -100,15 +100,19 @@ async def salesforce_callback(
     )
 
     try:
+        print(f"[OAuth] Exchanging code for tokens with PKCE...")
         # Exchange code for tokens with PKCE code_verifier
         token_data = await connector.exchange_code_for_tokens(
             code,
             state=state,
             code_verifier=code_verifier
         )
+        print(f"[OAuth] Token exchange successful! Got access_token")
 
         # Get user info from Salesforce
+        print(f"[OAuth] Fetching user info from Salesforce...")
         user_info = await connector.get_user_info(token_data["access_token"])
+        print(f"[OAuth] User info: {user_info.get('email')}")
 
         # Encrypt tokens
         encrypted_access_token = encryption_service.encrypt(token_data["access_token"])
@@ -167,6 +171,9 @@ async def salesforce_callback(
         )
 
     except Exception as e:
+        print(f"[OAuth] ERROR: {str(e)}")
+        import traceback
+        traceback.print_exc()
         await connector.close()
         # Redirect back to frontend with error
         return RedirectResponse(
