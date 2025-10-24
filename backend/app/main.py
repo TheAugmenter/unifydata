@@ -10,6 +10,13 @@ from fastapi.responses import JSONResponse
 from app.core.config import settings
 from app.core.database import engine, Base
 
+# Import all models to register them with Base.metadata
+from app.models.user import User
+from app.models.organization import Organization
+from app.models.data_source import DataSource
+from app.models.document import Document, DocumentChunk
+from app.models.conversation import Conversation, Message, UsageLog
+
 # Import routers directly instead of using routes.py
 from fastapi import APIRouter
 from app.api.endpoints.auth import router as auth_router
@@ -29,14 +36,13 @@ async def lifespan(app: FastAPI):
     # Startup
     print("Starting UnifyData.AI API...")
 
-    # Create database tables (commented out for local testing without DB)
-    # async with engine.begin() as conn:
-    #     await conn.run_sync(Base.metadata.create_all)
+    # Create database tables
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
-    # print("Database tables created")
+    print("Database tables created/verified")
     print(f"Environment: {settings.ENVIRONMENT}")
     print(f"Debug mode: {settings.DEBUG}")
-    print("Database initialization skipped (local dev mode)")
 
     yield
 
