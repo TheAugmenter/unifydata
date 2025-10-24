@@ -92,6 +92,12 @@ async def root():
     }
 
 
+@app.options("/{rest_of_path:path}")
+async def preflight_handler(rest_of_path: str):
+    """Handle CORS preflight OPTIONS requests"""
+    return {"message": "OK"}
+
+
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
