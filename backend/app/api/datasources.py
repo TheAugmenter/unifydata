@@ -307,10 +307,13 @@ async def trigger_sync(
     db: AsyncSession = Depends(get_db)
 ):
     """Manually trigger data sync for a source"""
+    from app.services.data_sync import data_sync_service
+    from uuid import UUID
+
     result = await db.execute(
         select(DataSource).where(
-            DataSource.id == source_id,
-            DataSource.user_id == current_user.id
+            DataSource.id == UUID(source_id),
+            DataSource.connected_by_user_id == current_user.id
         )
     )
     source = result.scalar_one_or_none()
@@ -318,18 +321,30 @@ async def trigger_sync(
     if not source:
         raise HTTPException(status_code=404, detail="Data source not found")
 
-    if source.status != "connected":
+    if source.status not in ["connected", "error"]:
         raise HTTPException(
             status_code=400,
-            detail="Data source is not in connected state"
+            detail=f"Cannot sync data source in '{source.status}' state"
         )
 
-    # TODO: Queue sync job with Celery
-    source.status = "syncing"
-    await db.commit()
+    try:
+        # Trigger sync using data sync service
+        sync_result = await data_sync_service.sync_data_source(
+            db=db,
+            data_source_id=UUID(source_id),
+            sync_type="manual"
+        )
 
-    return {
-        "message": "Sync triggered successfully",
-        "source_id": str(source.id),
-        "status": "syncing"
-    }
+        return {
+            "message": "Sync completed successfully",
+            "source_id": str(source.id),
+            "status": "success",
+            "stats": sync_result.get("stats", {}),
+            "sync_log_id": str(sync_result.get("sync_log_id"))
+        }
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Sync failed: {str(e)}"
+        )

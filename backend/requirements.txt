@@ -41,9 +41,18 @@ anthropic==0.8.1
 openai==1.7.2
 pinecone-client==3.2.2
 
-# Vector embeddings (optional for now - only needed for data sync)
-# sentence-transformers==2.3.1
-# numpy>=1.26.0
+# Document parsing
+pypdf==3.17.4
+python-docx==1.1.0
+python-pptx==0.6.23
+openpyxl==3.1.2
+beautifulsoup4==4.12.3
+lxml==5.1.0
+markdown==3.5.2
+chardet==5.2.0
+
+# Text processing
+tiktoken==0.5.2
 
 # Email
 sendgrid==6.11.0

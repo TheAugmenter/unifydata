@@ -344,3 +344,33 @@ async def refresh_token(
         token_type="bearer",
         expires_in=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
     )
+
+
+# Dependency for protected routes
+async def get_current_user(
+    token: str = Depends(lambda: None),  # Will be replaced with proper OAuth2 header
+    db: AsyncSession = Depends(get_db)
+) -> User:
+    """
+    Get current user from JWT token
+
+    This is a dependency that can be used in protected routes to get the current user.
+    """
+    from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+    from fastapi import Request
+
+    # For now, we'll extract token from Authorization header manually
+    # In production, use OAuth2PasswordBearer
+
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
+    # This is a simplified version - in production use proper OAuth2
+    # For now, datasources endpoints will work without auth for testing
+    raise HTTPException(
+        status_code=status.HTTP_501_NOT_IMPLEMENTED,
+        detail="Authentication not implemented for datasources yet - use for testing only"
+    )
