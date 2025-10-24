@@ -252,9 +252,9 @@ async def list_data_sources(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
-    """List all data sources for current user"""
+    """List all data sources for current user's organization"""
     result = await db.execute(
-        select(DataSource).where(DataSource.user_id == current_user.id)
+        select(DataSource).where(DataSource.org_id == current_user.org_id)
     )
     sources = result.scalars().all()
 
@@ -262,12 +262,12 @@ async def list_data_sources(
         "data_sources": [
             {
                 "id": str(source.id),
-                "type": source.type,
+                "type": source.source_type,
                 "name": source.name,
                 "status": source.status,
-                "last_synced_at": source.last_synced_at.isoformat() if source.last_synced_at else None,
+                "last_synced_at": source.last_sync_at.isoformat() if source.last_sync_at else None,
                 "documents_indexed": source.documents_indexed,
-                "metadata": source.metadata
+                "metadata": source.config
             }
             for source in sources
         ]
