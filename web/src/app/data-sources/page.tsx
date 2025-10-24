@@ -5,7 +5,7 @@
  * Allows users to connect and manage their data sources
  */
 
-import { useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 import { Database, RefreshCw, Loader2 } from 'lucide-react'
@@ -64,14 +64,10 @@ const CONNECTORS: {
   },
 ]
 
-export default function DataSourcesPage() {
+// Component to handle OAuth callback - wrapped in Suspense
+function OAuthCallbackHandler() {
   const searchParams = useSearchParams()
-  const { data: dataSources, isLoading, error } = useDataSources()
-  const connectMutation = useConnectDataSource()
-  const disconnectMutation = useDisconnectDataSource()
-  const syncMutation = useSyncDataSource()
 
-  // Handle OAuth callback status
   useEffect(() => {
     const status = searchParams.get('status')
     const source = searchParams.get('source')
@@ -89,6 +85,15 @@ export default function DataSourcesPage() {
       window.history.replaceState({}, '', '/data-sources')
     }
   }, [searchParams])
+
+  return null
+}
+
+function DataSourcesContent() {
+  const { data: dataSources, isLoading, error } = useDataSources()
+  const connectMutation = useConnectDataSource()
+  const disconnectMutation = useDisconnectDataSource()
+  const syncMutation = useSyncDataSource()
 
   const handleConnect = (sourceType: DataSourceType) => {
     connectMutation.mutate(sourceType)
@@ -234,5 +239,16 @@ export default function DataSourcesPage() {
         })}
       </div>
     </div>
+  )
+}
+
+export default function DataSourcesPage() {
+  return (
+    <>
+      <Suspense fallback={null}>
+        <OAuthCallbackHandler />
+      </Suspense>
+      <DataSourcesContent />
+    </>
   )
 }
