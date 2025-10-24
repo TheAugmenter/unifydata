@@ -2,7 +2,7 @@
 Data Source Model
 """
 from datetime import datetime
-from sqlalchemy import String, DateTime, Boolean, ForeignKey, Text, Integer, JSON
+from sqlalchemy import String, DateTime, Boolean, ForeignKey, Text, Integer, JSON, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
@@ -20,7 +20,7 @@ class DataSource(Base):
         UUID(as_uuid=True),
         primary_key=True,
         default=uuid.uuid4,
-        server_default="gen_random_uuid()"
+        server_default=text("gen_random_uuid()")
     )
 
     # Organization relationship
@@ -51,10 +51,10 @@ class DataSource(Base):
         String(50),
         nullable=False,
         default="connected",
-        server_default="connected",
+        server_default=text("connected"),
         comment="connected, disconnected, error, syncing"
     )
-    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=text("true"))
 
     # OAuth credentials (encrypted)
     access_token: Mapped[str | None] = mapped_column(Text)
@@ -75,34 +75,34 @@ class DataSource(Base):
     sync_frequency: Mapped[int] = mapped_column(
         Integer,
         default=3600,
-        server_default="3600",
+        server_default=text("3600"),
         comment="Sync frequency in seconds (default: 1 hour)"
     )
 
     # Statistics
-    total_documents: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
-    total_sync_count: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
-    failed_sync_count: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    total_documents: Mapped[int] = mapped_column(Integer, default=0, server_default=text("0"))
+    total_sync_count: Mapped[int] = mapped_column(Integer, default=0, server_default=text("0"))
+    failed_sync_count: Mapped[int] = mapped_column(Integer, default=0, server_default=text("0"))
 
     # Timestamps
     connected_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
         default=datetime.utcnow,
-        server_default="now()"
+        server_default=text("now()")
     )
     disconnected_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
         default=datetime.utcnow,
-        server_default="now()"
+        server_default=text("now()")
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
         default=datetime.utcnow,
-        server_default="now()",
+        server_default=text("now()"),
         onupdate=datetime.utcnow
     )
 
@@ -120,7 +120,7 @@ class SyncLog(Base):
         UUID(as_uuid=True),
         primary_key=True,
         default=uuid.uuid4,
-        server_default="gen_random_uuid()"
+        server_default=text("gen_random_uuid()")
     )
 
     # Data source relationship
@@ -143,10 +143,10 @@ class SyncLog(Base):
     )
 
     # Progress
-    documents_processed: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
-    documents_added: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
-    documents_updated: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
-    documents_deleted: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    documents_processed: Mapped[int] = mapped_column(Integer, default=0, server_default=text("0"))
+    documents_added: Mapped[int] = mapped_column(Integer, default=0, server_default=text("0"))
+    documents_updated: Mapped[int] = mapped_column(Integer, default=0, server_default=text("0"))
+    documents_deleted: Mapped[int] = mapped_column(Integer, default=0, server_default=text("0"))
 
     # Error information
     error_message: Mapped[str | None] = mapped_column(Text)
@@ -157,7 +157,7 @@ class SyncLog(Base):
         DateTime(timezone=True),
         nullable=False,
         default=datetime.utcnow,
-        server_default="now()"
+        server_default=text("now()")
     )
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     duration_seconds: Mapped[int | None] = mapped_column(Integer)
@@ -167,7 +167,7 @@ class SyncLog(Base):
         DateTime(timezone=True),
         nullable=False,
         default=datetime.utcnow,
-        server_default="now()"
+        server_default=text("now()")
     )
 
     def __repr__(self) -> str:
