@@ -56,10 +56,15 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS middleware
+# CORS middleware - allow specific origins with credentials
+cors_origins = settings.CORS_ORIGINS if settings.CORS_ORIGINS != ["*"] else [
+    "https://unifydata.vercel.app",
+    "http://localhost:3000",
+    "http://localhost:3001",
+]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
