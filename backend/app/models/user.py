@@ -29,7 +29,7 @@ class User(Base):
     is_email_verified: Mapped[bool] = mapped_column(
         Boolean,
         default=False,
-        server_default=text("false")
+        server_default="false"
     )
 
     # Profile
@@ -44,7 +44,7 @@ class User(Base):
         String(50),
         nullable=False,
         default="user",
-        server_default=text("user")
+        server_default="user"
     )
     org_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
@@ -56,11 +56,11 @@ class User(Base):
     onboarding_completed: Mapped[bool] = mapped_column(
         Boolean,
         default=False,
-        server_default=text("false")
+        server_default="false"
     )
     onboarding_step: Mapped[int] = mapped_column(
         default=0,
-        server_default=text("0")
+        server_default="0"
     )
 
     # Settings and preferences
@@ -72,11 +72,11 @@ class User(Base):
     last_password_change_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True)
     )
-    failed_login_attempts: Mapped[int] = mapped_column(default=0, server_default=text("0"))
+    failed_login_attempts: Mapped[int] = mapped_column(default=0, server_default="0")
     locked_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
     # Status
-    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=text("true"))
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
 
     # Timestamps
     created_at: Mapped[datetime] = mapped_column(

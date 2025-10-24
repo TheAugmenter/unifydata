@@ -60,11 +60,11 @@ class Conversation(Base):
     )
 
     # Statistics
-    message_count: Mapped[int] = mapped_column(Integer, default=0, server_default=text("0"))
-    total_tokens: Mapped[int] = mapped_column(Integer, default=0, server_default=text("0"))
+    message_count: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    total_tokens: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
 
     # Status
-    is_archived: Mapped[bool] = mapped_column(Boolean, default=False, server_default=text("false"))
+    is_archived: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
 
     # Timestamps
     last_message_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

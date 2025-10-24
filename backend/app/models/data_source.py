@@ -51,10 +51,10 @@ class DataSource(Base):
         String(50),
         nullable=False,
         default="connected",
-        server_default=text("connected"),
+        server_default="connected",
         comment="connected, disconnected, error, syncing"
     )
-    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=text("true"))
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
 
     # OAuth credentials (encrypted)
     access_token: Mapped[str | None] = mapped_column(Text)
@@ -75,14 +75,14 @@ class DataSource(Base):
     sync_frequency: Mapped[int] = mapped_column(
         Integer,
         default=3600,
-        server_default=text("3600"),
+        server_default="3600",
         comment="Sync frequency in seconds (default: 1 hour)"
     )
 
     # Statistics
-    total_documents: Mapped[int] = mapped_column(Integer, default=0, server_default=text("0"))
-    total_sync_count: Mapped[int] = mapped_column(Integer, default=0, server_default=text("0"))
-    failed_sync_count: Mapped[int] = mapped_column(Integer, default=0, server_default=text("0"))
+    total_documents: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    total_sync_count: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    failed_sync_count: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
 
     # Timestamps
     connected_at: Mapped[datetime] = mapped_column(
@@ -143,10 +143,10 @@ class SyncLog(Base):
     )
 
     # Progress
-    documents_processed: Mapped[int] = mapped_column(Integer, default=0, server_default=text("0"))
-    documents_added: Mapped[int] = mapped_column(Integer, default=0, server_default=text("0"))
-    documents_updated: Mapped[int] = mapped_column(Integer, default=0, server_default=text("0"))
-    documents_deleted: Mapped[int] = mapped_column(Integer, default=0, server_default=text("0"))
+    documents_processed: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    documents_added: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    documents_updated: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    documents_deleted: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
 
     # Error information
     error_message: Mapped[str | None] = mapped_column(Text)

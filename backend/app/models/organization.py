@@ -35,45 +35,45 @@ class Organization(Base):
         String(50),
         nullable=False,
         default="trial",
-        server_default=text("trial")
+        server_default="trial"
     )
     trial_ends_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     subscription_status: Mapped[str] = mapped_column(
         String(50),
         nullable=False,
         default="trialing",
-        server_default=text("trialing")
+        server_default="trialing"
     )
 
     # Limits
-    max_users: Mapped[int] = mapped_column(Integer, default=5, server_default=text("5"))
+    max_users: Mapped[int] = mapped_column(Integer, default=5, server_default="5")
     max_data_sources: Mapped[int] = mapped_column(
         Integer,
         default=3,
-        server_default=text("3")
+        server_default="3"
     )
     monthly_search_limit: Mapped[int] = mapped_column(
         Integer,
         default=1000,
-        server_default=text("1000")
+        server_default="1000"
     )
 
     # Usage tracking
-    current_users: Mapped[int] = mapped_column(Integer, default=0, server_default=text("0"))
+    current_users: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
     current_data_sources: Mapped[int] = mapped_column(
         Integer,
         default=0,
-        server_default=text("0")
+        server_default="0"
     )
     searches_this_month: Mapped[int] = mapped_column(
         Integer,
         default=0,
-        server_default=text("0")
+        server_default="0"
     )
 
     # Settings
     settings: Mapped[dict | None] = mapped_column(Text)  # JSON stored as text
-    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=text("true"))
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
 
     # Timestamps
     created_at: Mapped[datetime] = mapped_column(

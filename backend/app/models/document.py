@@ -76,7 +76,7 @@ class Document(Base):
         String(50),
         nullable=False,
         default="pending",
-        server_default=text("pending"),
+        server_default="pending",
         comment="pending, processing, completed, failed"
     )
     vector_id: Mapped[str | None] = mapped_column(
@@ -104,7 +104,7 @@ class Document(Base):
         String(50),
         nullable=False,
         default="pending",
-        server_default=text("pending"),
+        server_default="pending",
         comment="pending, processing, completed, failed"
     )
     parse_error: Mapped[str | None] = mapped_column(Text)
@@ -112,7 +112,7 @@ class Document(Base):
     # Soft delete
     is_deleted: Mapped[bool] = mapped_column(
         default=False,
-        server_default=text("false"),
+        server_default="false",
         comment="Soft delete flag"
     )
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
@@ -175,7 +175,7 @@ class DocumentChunk(Base):
         String(50),
         nullable=False,
         default="pending",
-        server_default=text("pending"),
+        server_default="pending",
         comment="pending, processing, completed, failed"
     )
 
