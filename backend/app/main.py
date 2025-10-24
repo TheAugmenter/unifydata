@@ -11,11 +11,7 @@ from app.core.config import settings
 from app.core.database import engine, Base
 
 # Import all models to register them with Base.metadata
-from app.models.user import User
-from app.models.organization import Organization
-from app.models.data_source import DataSource
-from app.models.document import Document, DocumentChunk
-from app.models.conversation import Conversation, Message, UsageLog
+import app.models  # noqa - Import to register models with Base.metadata
 
 # Import routers directly instead of using routes.py
 from fastapi import APIRouter
