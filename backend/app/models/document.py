@@ -2,7 +2,7 @@
 Document Model for storing parsed content
 """
 from datetime import datetime
-from sqlalchemy import String, DateTime, ForeignKey, Text, Integer, JSON, BigInteger
+from sqlalchemy import String, DateTime, ForeignKey, Text, Integer, JSON, BigInteger, text
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
