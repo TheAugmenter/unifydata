@@ -36,12 +36,17 @@ class SalesforceConnector(BaseOAuthConnector):
     def token_url(self) -> str:
         return "https://login.salesforce.com/services/oauth2/token"
 
-    async def get_authorization_url(self, state: str) -> str:
+    async def get_authorization_url(
+        self,
+        state: str,
+        code_challenge: Optional[str] = None
+    ) -> str:
         """
-        Generate Salesforce OAuth authorization URL
+        Generate Salesforce OAuth authorization URL with PKCE support
 
         Args:
             state: CSRF protection state parameter
+            code_challenge: PKCE code challenge (BASE64URL(SHA256(code_verifier)))
 
         Returns:
             Full authorization URL to redirect user to
@@ -56,19 +61,26 @@ class SalesforceConnector(BaseOAuthConnector):
             "prompt": "login",
         }
 
+        # Add PKCE parameters if provided
+        if code_challenge:
+            params["code_challenge"] = code_challenge
+            params["code_challenge_method"] = "S256"  # SHA-256 hashing
+
         return f"{self.authorization_base_url}?{urlencode(params)}"
 
     async def exchange_code_for_tokens(
         self,
         code: str,
-        state: Optional[str] = None
+        state: Optional[str] = None,
+        code_verifier: Optional[str] = None
     ) -> Dict[str, Any]:
         """
-        Exchange authorization code for access and refresh tokens
+        Exchange authorization code for access and refresh tokens with PKCE support
 
         Args:
             code: Authorization code from OAuth callback
             state: State parameter for CSRF validation (not used in token exchange)
+            code_verifier: PKCE code verifier (must match the original code_challenge)
 
         Returns:
             Dictionary containing:
@@ -87,6 +99,10 @@ class SalesforceConnector(BaseOAuthConnector):
             "client_secret": self.client_secret,
             "redirect_uri": self.redirect_uri,
         }
+
+        # Add PKCE code_verifier if provided
+        if code_verifier:
+            data["code_verifier"] = code_verifier
 
         try:
             response = await self.http_client.post(

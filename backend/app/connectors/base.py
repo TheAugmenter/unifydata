@@ -3,9 +3,12 @@ Base OAuth Connector
 Abstract base class for all OAuth-based data source connectors
 """
 from abc import ABC, abstractmethod
-from typing import Dict, Optional, Any
+from typing import Dict, Optional, Any, Tuple
 from datetime import datetime, timedelta
 import httpx
+import secrets
+import hashlib
+import base64
 
 
 class BaseOAuthConnector(ABC):
@@ -147,6 +150,35 @@ class BaseOAuthConnector(ABC):
             Datetime when token will expire
         """
         return datetime.utcnow() + timedelta(seconds=expires_in)
+
+    @staticmethod
+    def generate_pkce_pair() -> Tuple[str, str]:
+        """
+        Generate PKCE code_verifier and code_challenge pair
+
+        PKCE (Proof Key for Code Exchange) adds security to OAuth flows by:
+        1. Generating a random code_verifier (43-128 characters)
+        2. Creating a code_challenge = BASE64URL(SHA256(code_verifier))
+        3. Sending code_challenge in authorization request
+        4. Sending code_verifier in token exchange request
+
+        This prevents authorization code interception attacks.
+
+        Returns:
+            Tuple of (code_verifier, code_challenge)
+        """
+        # Generate random code_verifier (43-128 characters, URL-safe)
+        code_verifier = base64.urlsafe_b64encode(secrets.token_bytes(32)).decode('utf-8')
+        # Remove padding characters
+        code_verifier = code_verifier.replace('=', '')
+
+        # Generate code_challenge = BASE64URL(SHA256(code_verifier))
+        code_challenge_bytes = hashlib.sha256(code_verifier.encode('utf-8')).digest()
+        code_challenge = base64.urlsafe_b64encode(code_challenge_bytes).decode('utf-8')
+        # Remove padding characters
+        code_challenge = code_challenge.replace('=', '')
+
+        return code_verifier, code_challenge
 
     async def close(self):
         """Close HTTP client"""

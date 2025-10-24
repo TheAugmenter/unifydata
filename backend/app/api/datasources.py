@@ -14,6 +14,7 @@ from app.core.config import settings
 from app.models import DataSource, User
 from app.services.encryption import encryption_service
 from app.connectors.salesforce import SalesforceConnector
+from app.connectors.base import BaseOAuthConnector
 from app.api.dependencies import get_current_user
 
 router = APIRouter()
@@ -28,7 +29,7 @@ async def connect_salesforce(
     # current_user: User = Depends(get_current_user)  # Disabled for testing
 ):
     """
-    Initiate Salesforce OAuth flow
+    Initiate Salesforce OAuth flow with PKCE
 
     Returns authorization URL to redirect user to
     """
@@ -38,11 +39,15 @@ async def connect_salesforce(
             detail="Salesforce OAuth is not configured"
         )
 
+    # Generate PKCE code_verifier and code_challenge
+    code_verifier, code_challenge = BaseOAuthConnector.generate_pkce_pair()
+
     # Generate CSRF state token
     state = secrets.token_urlsafe(32)
     oauth_states[state] = {
         "user_id": "test-user-id",  # Hardcoded for testing
         "source_type": "salesforce",
+        "code_verifier": code_verifier,  # Store for token exchange
         "created_at": datetime.utcnow()
     }
 
@@ -54,8 +59,8 @@ async def connect_salesforce(
         scopes=["api", "refresh_token", "id"]
     )
 
-    # Get authorization URL
-    auth_url = await connector.get_authorization_url(state)
+    # Get authorization URL with PKCE code_challenge
+    auth_url = await connector.get_authorization_url(state, code_challenge=code_challenge)
     await connector.close()
 
     return {
@@ -84,6 +89,7 @@ async def salesforce_callback(
 
     state_data = oauth_states.pop(state)
     user_id = state_data["user_id"]
+    code_verifier = state_data.get("code_verifier")  # Retrieve PKCE code_verifier
 
     # Initialize Salesforce connector
     connector = SalesforceConnector(
@@ -94,8 +100,12 @@ async def salesforce_callback(
     )
 
     try:
-        # Exchange code for tokens
-        token_data = await connector.exchange_code_for_tokens(code, state)
+        # Exchange code for tokens with PKCE code_verifier
+        token_data = await connector.exchange_code_for_tokens(
+            code,
+            state=state,
+            code_verifier=code_verifier
+        )
 
         # Get user info from Salesforce
         user_info = await connector.get_user_info(token_data["access_token"])

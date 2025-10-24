@@ -27,21 +27,21 @@ api_router.include_router(datasources_router, prefix="/datasources", tags=["Data
 async def lifespan(app: FastAPI):
     """Application lifespan events"""
     # Startup
-    print("🚀 Starting UnifyData.AI API...")
+    print("Starting UnifyData.AI API...")
 
     # Create database tables (commented out for local testing without DB)
     # async with engine.begin() as conn:
     #     await conn.run_sync(Base.metadata.create_all)
 
-    # print("✅ Database tables created")
-    print(f"🌍 Environment: {settings.ENVIRONMENT}")
-    print(f"📝 Debug mode: {settings.DEBUG}")
-    print("⚠️  Database initialization skipped (local dev mode)")
+    # print("Database tables created")
+    print(f"Environment: {settings.ENVIRONMENT}")
+    print(f"Debug mode: {settings.DEBUG}")
+    print("Database initialization skipped (local dev mode)")
 
     yield
 
     # Shutdown
-    print("👋 Shutting down UnifyData.AI API...")
+    print("Shutting down UnifyData.AI API...")
 
 
 # Create FastAPI application
@@ -70,7 +70,7 @@ app.add_middleware(GZipMiddleware, minimum_size=1000)
 app.include_router(api_router, prefix="/api")
 
 # Debug: Print all registered routes
-print(f"🔍 Total app routes: {len(app.routes)}")
+print(f"Total app routes: {len(app.routes)}")
 for route in app.routes:
     if hasattr(route, 'path'):
         print(f"  - {route.path}")
