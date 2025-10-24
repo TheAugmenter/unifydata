@@ -12,6 +12,7 @@ class Settings(BaseSettings):
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=True,
+        extra="ignore",  # Ignore extra fields not defined in Settings
     )
 
     # Application
@@ -25,11 +26,18 @@ class Settings(BaseSettings):
     @property
     def CORS_ORIGINS(self) -> List[str]:
         """Get CORS origins"""
-        return [
+        origins = [
             self.WEB_URL,
             "http://localhost:3000",
             "http://localhost:3001",
         ]
+        # Add production frontend URL explicitly
+        if self.ENVIRONMENT == "production":
+            origins.extend([
+                "https://unifydata.vercel.app",
+                "https://*.vercel.app",  # Allow all Vercel preview deployments
+            ])
+        return origins
 
     # Database
     DATABASE_URL: str
