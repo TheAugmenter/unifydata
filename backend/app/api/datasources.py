@@ -81,8 +81,8 @@ def create_connector(source_type: str) -> BaseOAuthConnector:
 
     if not client_id or not client_secret:
         raise HTTPException(
-            status_code=500,
-            detail=f"{source_type.title()} OAuth is not configured. Please add credentials to .env"
+            status_code=503,
+            detail=f"{source_type.title()} connector is not configured yet. Please contact your administrator to set up OAuth credentials."
         )
 
     connector_class = config["connector_class"]
