@@ -73,3 +73,32 @@ export interface ApiError {
   error: string
   message: string
 }
+
+export type DataSourceType = 'salesforce' | 'slack' | 'google_drive' | 'notion' | 'gmail'
+
+export type DataSourceStatus = 'connected' | 'disconnected' | 'syncing' | 'error'
+
+export interface DataSource {
+  id: string
+  type: DataSourceType
+  name: string
+  status: DataSourceStatus
+  last_synced_at: string | null
+  documents_indexed: number
+  metadata: Record<string, any>
+}
+
+export interface DataSourcesListResponse {
+  data_sources: DataSource[]
+}
+
+export interface ConnectDataSourceResponse {
+  authorization_url: string
+  state: string
+}
+
+export interface SyncDataSourceResponse {
+  message: string
+  source_id: string
+  status: string
+}
