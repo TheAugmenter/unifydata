@@ -9,7 +9,18 @@ from fastapi.responses import JSONResponse
 
 from app.core.config import settings
 from app.core.database import engine, Base
-from app.api.routes import api_router
+
+# Import routers directly instead of using routes.py
+from fastapi import APIRouter
+from app.api.endpoints.auth import router as auth_router
+from app.api.endpoints.onboarding import router as onboarding_router
+from app.api.datasources import router as datasources_router
+
+# Create API router
+api_router = APIRouter()
+api_router.include_router(auth_router, prefix="/auth", tags=["Authentication"])
+api_router.include_router(onboarding_router, prefix="/onboarding", tags=["Onboarding"])
+api_router.include_router(datasources_router, prefix="/datasources", tags=["Data Sources"])
 
 
 @asynccontextmanager
@@ -18,13 +29,14 @@ async def lifespan(app: FastAPI):
     # Startup
     print("🚀 Starting UnifyData.AI API...")
 
-    # Create database tables
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    # Create database tables (commented out for local testing without DB)
+    # async with engine.begin() as conn:
+    #     await conn.run_sync(Base.metadata.create_all)
 
-    print("✅ Database tables created")
+    # print("✅ Database tables created")
     print(f"🌍 Environment: {settings.ENVIRONMENT}")
     print(f"📝 Debug mode: {settings.DEBUG}")
+    print("⚠️  Database initialization skipped (local dev mode)")
 
     yield
 
@@ -56,6 +68,12 @@ app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 # Include API routes
 app.include_router(api_router, prefix="/api")
+
+# Debug: Print all registered routes
+print(f"🔍 Total app routes: {len(app.routes)}")
+for route in app.routes:
+    if hasattr(route, 'path'):
+        print(f"  - {route.path}")
 
 
 @app.get("/")

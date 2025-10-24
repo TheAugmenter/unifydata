@@ -6,7 +6,7 @@ python-multipart==0.0.6
 # Database
 sqlalchemy==2.0.25
 alembic==1.13.1
-psycopg2-binary==2.9.9
+psycopg[binary]==3.1.18
 asyncpg==0.29.0
 
 # Redis
@@ -41,9 +41,9 @@ anthropic==0.8.1
 openai==1.7.2
 pinecone-client==3.2.2
 
-# Vector embeddings
-sentence-transformers==2.3.1
-numpy==1.26.3
+# Vector embeddings (optional for now - only needed for data sync)
+# sentence-transformers==2.3.1
+# numpy>=1.26.0
 
 # Email
 sendgrid==6.11.0
