@@ -56,7 +56,10 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS middleware
+# CORS middleware - Debug logging
+print(f"🔒 CORS Configuration:")
+print(f"  Environment: {settings.ENVIRONMENT}")
+print(f"  Allowed Origins: {settings.CORS_ORIGINS}")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
