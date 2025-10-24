@@ -25,19 +25,15 @@ class Settings(BaseSettings):
     # CORS
     @property
     def CORS_ORIGINS(self) -> List[str]:
-        """Get CORS origins"""
-        origins = [
+        """Get CORS origins - allow all origins in production for now"""
+        if self.ENVIRONMENT == "production":
+            # Allow all origins in production (can be restricted later)
+            return ["*"]
+        return [
             self.WEB_URL,
             "http://localhost:3000",
             "http://localhost:3001",
         ]
-        # Add production frontend URL explicitly
-        if self.ENVIRONMENT == "production":
-            origins.extend([
-                "https://unifydata.vercel.app",
-                "https://*.vercel.app",  # Allow all Vercel preview deployments
-            ])
-        return origins
 
     # Database
     DATABASE_URL: str
